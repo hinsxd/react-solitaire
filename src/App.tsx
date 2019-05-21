@@ -1,26 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-
+import { useDeck } from './useDeck';
 const App: React.FC = () => {
+  const {
+    state: { tableau, foundation, stock, waste },
+    dispatch
+  } = useDeck();
+  console.log('Tableau:', tableau);
+  console.log('Stock:', stock);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      Watch console
+      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>
     </div>
   );
-}
+};
 
 export default App;
