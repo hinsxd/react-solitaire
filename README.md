@@ -5,6 +5,7 @@
 ### Algorithm
 
 - [x] Basic types
+- [ ] Write test!!!
 - [ ] Move one card between columns
 - [ ] Move one card with constrain (alternating colors, rank order)
 - [ ] Move pile of ordered cards
