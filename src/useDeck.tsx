@@ -1,5 +1,7 @@
 import { useState, useReducer } from 'react';
 import produce from 'immer';
+import shuffle from 'lodash/shuffle';
+import range from 'lodash/range';
 export enum Suit {
   Spades,
   Hearts,
@@ -47,20 +49,16 @@ type State = {
 type Action = { type: 'reset' } | { type: 'move'; from: number; to: number };
 
 const init = (): State => {
-  const cards: Card[] = [];
-
-  // Generate new cards.
-  for (let s = 0; s < 4; s++) {
-    for (let r = 1; r <= 13; r++) {
-      cards.push(makeCard(r, s));
-    }
-  }
-
-  // Shuffle cards.
-  for (let i = cards.length; i > 0; i--) {
-    let j = Math.floor(Math.random() * i);
-    [cards[i - 1], cards[j]] = [cards[j], cards[i - 1]];
-  }
+  const cards: Card[] = shuffle(
+    range(4) // 4 Suits
+      .map(s =>
+        range(1, 14) // 13 ranks
+          .map(
+            r => makeCard(r, s) //Generate a Card object
+          )
+      )
+      .flat() // Make 1d array
+  );
 
   const tableau: Card[][] = [];
 
