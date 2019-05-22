@@ -85,6 +85,7 @@ const reducer = (state: State, action: Action) => {
 
       return produce(state, draft => {
         const card = draft.tableau[from].shift();
+        draft.tableau[from][0].flipped = true;
         if (card) {
           draft.tableau[to].unshift(card);
         }
