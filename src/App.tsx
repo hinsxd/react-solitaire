@@ -4,14 +4,17 @@ import { useDeck } from './useDeck';
 const App: React.FC = () => {
   const {
     state: { tableau, foundation, stock, waste },
-    dispatch
+    dispatch,
+    move,
+    reset
   } = useDeck();
   console.log('Tableau:', tableau);
   console.log('Stock:', stock);
   return (
     <div className="App">
       Watch console
-      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>
+      <button onClick={reset}>Reset</button>
+      <button onClick={() => move({ from: 1, to: 2 })}>from 1 to 2</button>
     </div>
   );
 };

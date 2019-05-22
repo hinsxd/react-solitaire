@@ -1,4 +1,6 @@
 import { useState, useReducer } from 'react';
+import produce from 'immer';
+
 import { Card, makeCard } from './card';
 
 type State = {
@@ -8,7 +10,7 @@ type State = {
   waste: Card[];
 };
 
-type Action = { type: 'reset' };
+type Action = { type: 'reset' } | { type: 'move'; from: number; to: number };
 
 const init = (): State => {
   const cards: Card[] = [];
@@ -46,6 +48,15 @@ const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'reset':
       return init();
+    case 'move':
+      const { from, to } = action;
+
+      return produce(state, draft => {
+        const card = draft.tableau[from].shift();
+        if (card) {
+          draft.tableau[to].unshift(card);
+        }
+      });
     default:
       throw new Error('Invalid action');
   }
@@ -54,5 +65,7 @@ const reducer = (state: State, action: Action) => {
 export const useDeck = () => {
   const [state, dispatch] = useReducer(reducer, undefined, init);
   const reset = () => dispatch({ type: 'reset' });
-  return { state, dispatch, reset };
+  const move = ({ from, to }: { from: number; to: number }) =>
+    dispatch({ type: 'move', from, to });
+  return { state, dispatch, reset, move };
 };
