@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Paper } from '@material-ui/core';
 import './App.css';
@@ -9,20 +9,38 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       padding: theme.spacing(3, 2)
     },
-    cardPaper: {}
+    cardPaper: {
+      padding: theme.spacing(1),
+      height: theme.spacing(2)
+    }
   })
 );
 
 const App: React.FC = () => {
   const classes = useStyles();
-  const [{ from, to }, setMove] = useState({ from: 1, to: 2 });
+
+  const [selected, setSelected] = useState<{ x: number; y: number } | null>(
+    null
+  );
+
   const {
-    state: { tableau, foundation, stock, waste },
+    tableau,
+    foundation,
+    stock,
+    waste,
     dispatch,
     move,
     reset
   } = useDeck();
 
+  const handleSelect = (x: number, y: number) => (
+    event: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
+    if (y !== 0) {
+      return;
+    }
+    setSelected({ x, y: 0 });
+  };
   return (
     <Container fixed>
       <Grid
@@ -30,48 +48,31 @@ const App: React.FC = () => {
         direction="row"
         justify="center"
         alignItems="flex-start"
-        spacing={3}
+        spacing={2}
       >
         {tableau.map((column, i) => (
           <Grid
             item
-            xs
+            xs={1}
             container
             direction="column-reverse"
-            spacing={3}
+            spacing={1}
             key={`column${i}`}
           >
-            {column.map((card, j) => (
-              <Grid item key={`${card.suitName}${card.rankName}`}>
+            {column.map(({ flipped, rankName, suitName }, j) => (
+              <Grid
+                item
+                key={`${suitName}${rankName}`}
+                onClick={handleSelect(i, j)}
+              >
                 <Paper className={classes.cardPaper}>
-                  {card.suitName}
-                  {card.rankName}
-                  {card.flipped && 'flipped'}
+                  <span>{flipped ? `${suitName} ${rankName}` : '--'}</span>
                 </Paper>
               </Grid>
             ))}
           </Grid>
         ))}
       </Grid>
-      <div>
-        From:{' '}
-        <input
-          value={from}
-          type="number"
-          onChange={({ currentTarget: { value = 1 } }) =>
-            setMove(ori => ({ ...ori, from: +value }))
-          }
-        />
-        To:{' '}
-        <input
-          value={to}
-          type="number"
-          onChange={({ currentTarget: { value = 1 } }) =>
-            setMove(ori => ({ ...ori, to: +value }))
-          }
-        />
-        <button onClick={() => move({ from, to })}>Move</button>
-      </div>
     </Container>
   );
 };
